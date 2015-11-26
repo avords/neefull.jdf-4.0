@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                     http://www.springframework.org/schema/beans/spring-beans.xsd
+                     http://www.springframework.org/schema/tx
+                     http://www.springframework.org/schema/tx/spring-tx.xsd
+                     http://www.springframework.org/schema/aop
+                     http://www.springframework.org/schema/aop/spring-aop.xsd
+                     http://www.springframework.org/schema/context
+                     http://www.springframework.org/schema/context/spring-context-2.5.xsd ">
+
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="locations">
+			<list>
+				<value>classpath:/application.properties</value>
+				<value>classpath:/jdbc.properties</value>
+				<value>classpath:/global.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- maximum file size in bytes 20M  -->
+		<property name="maxUploadSize" value="20000000" />
+	</bean>
+
+	<bean id="projectConfig" class="com.mvc.framework.config.ProjectConfig">
+		<property name="modelBasePackage" value="${modelBasePackage}" />
+		<property name="defaultLocaleName" value="${defaultLocaleName}"/>
+		<property name="defaultSkin" value="${defaultSkin}"/>
+		<property name="passwordExpired" value="${passwordExpired}"/>
+		<property name="formGroup" value="${formGroup}"/>
+	</bean>
+	
+	<bean id="globalConfig" class="com.mvc.framework.config.GlobalConfig">
+		<property name="sessionName" value="${sessionName}" />
+		<property name="cookieDomain" value="${cookieDomain}" />
+		<property name="cookiePath" value="${cookiePath}" />
+		<property name="validateCode" value="${validateCode}" />
+		<property name="loginUrl" value="${loginUrl}" />
+		<property name="portalServerName" value="${portalServerName}" />
+		<property name="refreshPermissionTime" value="${refreshPermissionTime}" />
+		<property name="rootUrl" value="${rootUrl}" />
+		<property name="loginErrorWaitTime" value="${loginErrorWaitTime}"/>
+		<property name="accessControlAll" value="${accessControlAll}"/>
+	</bean>
+
+	<bean id="exceptionResolver"
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.Exception">common/500</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="dictionaryManager" class="com.mvc.framework.service.DictionaryManager"></bean>
+
+	<bean id="dictionaryFacade" class="com.mvc.framework.service.DictionaryFacade">
+		<property name="dictionaryManager" ref="dictionaryManager"/>
+	</bean>
+
+	<bean class="com.mvc.framework.util.MessageUtils">
+		<property name="languageManager" ref="languageManager" />
+		<property name="messagePropertyManager" ref="messagePropertyManager" />
+	</bean>
+	
+	<bean class="com.mvc.framework.taglib.SelectTag">
+		<property name="dictionaryFacade" ref="dictionaryFacade" />
+	</bean>
+
+	<bean class="com.mvc.framework.taglib.ColumnValueTag">
+		<property name="dictionaryFacade" ref="dictionaryFacade" />
+	</bean>
+	
+	<bean class="com.mvc.framework.taglib.DictionaryNameTag">
+		<property name="dictionaryFacade" ref="dictionaryFacade" />
+	</bean>
+	
+	<bean class="com.mvc.framework.taglib.TreeSelectTag">
+		<property name="treeManager" ref="treeManager" />
+	</bean>
+	
+	
+</beans>

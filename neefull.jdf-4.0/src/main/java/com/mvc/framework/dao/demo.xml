@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL MAP 2.0//EN"
+  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="demo">
+
+<select id="searchCurrentDate" parameterClass="String" resultClass="String">
+<![CDATA[
+		select to_char(sysdate,'yyyy-MM-dd hh:mi:ss') from dual
+]]>
+</select>
+
+</sqlMap>

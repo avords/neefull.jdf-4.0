@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+           http://www.springframework.org/schema/jdbc
+           http://www.springframework.org/schema/jdbc/spring-jdbc-2.5.xsd"><!--
+
+	<bean id="memcachedPool" class="com.danga.MemCached.SockIOPool"
+		factory-method="getInstance" init-method="initialize" destroy-method="shutDown">
+		<constructor-arg>
+			<value>neeaMemcachedPool</value>
+		</constructor-arg>
+		<property name="servers">
+			<list>
+				<value>localhost:11211</value>
+
+					<value> 192.168.54.207:12346 </value>
+
+			</list>
+		</property>
+
+			<property name="weights"> <value>5,5</value> </property>
+
+		<property name="initConn">
+			<value>20</value>
+		</property>
+		<property name="minConn">
+			<value>10</value>
+		</property>
+		<property name="maxConn">
+			<value>500</value>
+		</property>
+		<property name="maintSleep">
+			<value>30</value>
+		</property>
+		<property name="nagle">
+			<value>false</value>
+		</property>
+		<property name="maxIdle">
+			<value>6000</value>
+		</property>
+		<property name="socketTO">
+			<value>3000</value>
+		</property>
+	</bean>
+
+	<bean id="memCacheClient" class="com.danga.MemCached.MemCachedClient">
+		<constructor-arg>
+			<value>neeaMemcachedPool</value>
+		</constructor-arg>
+		<property name="compressEnable">
+			<value>true</value>
+		</property>
+		<property name="compressThreshold">
+			<value>65536</value>
+		</property>
+	</bean>
+
+	 <bean name="memcachedClientBuilder" class="net.rubyeye.xmemcached.XMemcachedClientBuilder">
+                 XMemcachedClientBuilder have two arguments.First is server list,and second is weights array.
+                <constructor-arg>
+                        <list>
+                                <bean class="java.net.InetSocketAddress">
+                                        <constructor-arg>
+                                                <value>localhost</value>
+                                        </constructor-arg>
+                                        <constructor-arg>
+                                                <value>11211</value>
+                                        </constructor-arg>
+                                </bean>
+                        </list>
+                </constructor-arg>
+                <constructor-arg>
+                        <list>
+                                <value>1</value>
+                        </list>
+                </constructor-arg>
+                <property name="connectionPoolSize" value="2"></property>
+                <property name="commandFactory">
+                        <bean class="net.rubyeye.xmemcached.command.TextCommandFactory"></bean>
+                </property>
+                <property name="sessionLocator">
+                        <bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"></bean>
+                </property>
+                <property name="transcoder">
+                        <bean class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder" />
+                </property>
+        </bean>
+         Use factory bean to build memcached client
+        <bean name="memcachedClient3" factory-bean="memcachedClientBuilder"
+                factory-method="build" destroy-method="shutdown"/>
+
+	--><!-- Ehcache -->
+	<bean id="cacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+
+	<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager" ref="cacheManager" />
+		<property name="cacheName" value="com.mvc.EHCACHE" />
+		<property name="maxElementsInMemory" value="100000" />
+		<property name="eternal" value="false" />
+		<property name="overflowToDisk" value="false" />
+		<!-- seconds -->
+		<property name="timeToLive" value="1800" />
+		<!-- don't check-->
+		<property name="timeToIdle" value="0" />
+	</bean>
+
+	<bean id="ehcacheAdaptor" class="com.mvc.framework.cache.EhcacheAdaptor">
+		<property name="ehcache" ref="ehcache" />
+	</bean><!--
+
+	<bean id="memoryCachedAdaptor" class="com.mvc.framework.cache.MemoryCachedAdaptor">
+		<property name="memCacheClient" ref="memCacheClient"></property>
+	</bean>
+
+--></beans>

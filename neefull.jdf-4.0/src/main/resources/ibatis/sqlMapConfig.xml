@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig
+PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+ "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<!-- some java alias -->
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="Long" type="java.lang.Long" />
+	<typeAlias alias="Integer" type="java.lang.Integer" />
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="List" type="java.util.List" />
+	<sqlMap resource="com/mvc/framework/dao/demo.xml" />
+</sqlMapConfig>

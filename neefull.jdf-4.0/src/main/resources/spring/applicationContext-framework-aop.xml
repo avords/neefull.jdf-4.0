@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                     http://www.springframework.org/schema/beans/spring-beans.xsd
+                     http://www.springframework.org/schema/tx
+                     http://www.springframework.org/schema/tx/spring-tx.xsd
+                     http://www.springframework.org/schema/aop
+                     http://www.springframework.org/schema/aop/spring-aop.xsd
+                     http://www.springframework.org/schema/context
+                     http://www.springframework.org/schema/context/spring-context-2.5.xsd ">
+
+
+	<bean id="dictionaryCacheRemoveInterceptor" class="com.mvc.framework.aop.DictionaryCacheRemoveInterceptor">
+		<property name="cacheService" ref="ehcacheAdaptor"></property>
+	</bean>
+
+	<aop:config proxy-target-class="true">
+		<!-- Dictionary manager -->
+		<aop:advisor pointcut="execution(* com.mvc.framework.service.DictionaryManager.getChildrenByParentId(..))" advice-ref="methodCacheInterceptor" />
+		<aop:advisor pointcut="execution(* com.mvc.framework.service.DictionaryManager.getChildrenByRootId(..))" advice-ref="methodCacheInterceptor" />
+		<aop:advisor pointcut="execution(* com.mvc.framework.service.DictionaryManager.getDictionariesByDictionaryId(..))" advice-ref="methodCacheInterceptor" />
+		<aop:advisor pointcut="execution(* com.mvc.framework.service.DictionaryManager.getDictionariesByDictionaryIdOrderByNameAsc(..))" advice-ref="methodCacheInterceptor" />
+		<aop:advisor pointcut="execution(* com.mvc.framework.service.DictionaryManager.getDictionariesByDictionaryIdOrderByNameDesc(..))" advice-ref="methodCacheInterceptor" />
+		<aop:advisor pointcut="execution(* com.mvc.framework.service.DictionaryManager.deleteDictionaresByDictionaryId(..))" advice-ref="dictionaryCacheRemoveInterceptor" />
+		<aop:advisor pointcut="execution(* com.mvc.framework.service.DictionaryManager.updateHook(..))" advice-ref="dictionaryCacheRemoveInterceptor" />
+		<!-- File strategy -->
+		<aop:advisor pointcut="execution(* com.mvc.component.file.service.FileStrategyManager.getFileStrategyByAppName(..))" advice-ref="methodCacheInterceptor" />
+		<!-- Chart data -->
+		<aop:advisor pointcut="execution(* com.mvc.report.service.ChartDataManager.searchChartDataBySql(..))" advice-ref="methodCacheInterceptor" />
+		<!-- Common ibatis report -->
+		<aop:advisor pointcut="execution(* com.mvc.report.service.IbatisReportDataManager.getListData(..))" advice-ref="methodCacheInterceptor" />
+		<aop:advisor pointcut="execution(* com.mvc.report.service.IbatisReportDataManager.getData(..))" advice-ref="methodCacheInterceptor" />
+		<!-- Database write/read separate -->
+		<aop:advisor pointcut="execution(* com.mvc..*.service.*Manager.*(..))" advice-ref="dynamicDataSourceInterceptor" />
+	</aop:config>
+
+</beans>

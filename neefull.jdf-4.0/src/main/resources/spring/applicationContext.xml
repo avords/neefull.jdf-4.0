@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+           http://www.springframework.org/schema/jdbc
+           http://www.springframework.org/schema/jdbc/spring-jdbc-2.5.xsd">
+
+	<import resource="applicationContext-framework.xml"/>
+	<import resource="applicationContext-mail.xml"/>
+	<import resource="applicationContext-cache.xml"/>
+	<import resource="applicationContext-dao.xml"/>
+	<import resource="applicationContext-aop.xml"/>
+	<import resource="applicationContext-tx.xml"/>
+	<import resource="applicationContext-framework-aop.xml"/>
+	<import resource="applicationContext-web.xml"/>
+	<import resource="applicationContext-task.xml"/>
+	<!--
+		Outline:
+		1.applicationContext.xml：total；
+		2.applicationContext-framework.xml：Basic(properties,dictionary,framework taglibs)
+		3.applicationContext-cache.xml：Cache(memcached,ehcache)
+		4.applicationContext-dao.xml：(HIBERNATE,IBATIS，HIBERNATE only scan all model under package com.mvc)
+		5.applicationContext-tx.xml
+		6.applicationContext-aop.xml
+		7.applicationContext-framework-aop.xml
+		*8.applicationContext-web.xml:(File upload,Exception page,hibernate session)
+		9.applicationContext-app.xml:Application configuration
+		10.springmvc-servlet.xml:Controller
+		11.applicationContext-task.xml:Task
+	 -->
+</beans>

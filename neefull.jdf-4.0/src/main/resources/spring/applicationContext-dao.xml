@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                     http://www.springframework.org/schema/beans/spring-beans.xsd
+                     http://www.springframework.org/schema/tx
+                     http://www.springframework.org/schema/tx/spring-tx.xsd
+                     http://www.springframework.org/schema/aop
+                     http://www.springframework.org/schema/aop/spring-aop.xsd
+                     http://www.springframework.org/schema/context
+                     http://www.springframework.org/schema/context/spring-context-2.5.xsd ">
+
+	<bean id="parentDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="initialPoolSize" value="${jdbc.default.initialPoolSize}" />
+		<property name="minPoolSize" value="${jdbc.default.minPoolSize}" />
+		<property name="maxPoolSize" value="${jdbc.default.maxPoolSize}" />
+		<property name="maxIdleTime" value="${jdbc.default.maxIdleTime}" />
+		<property name="idleConnectionTestPeriod" value="${jdbc.default.idleConnectionTestPeriod}" />
+		<property name="testConnectionOnCheckin" value="${jdbc.default.testConnectionOnCheckin}" />
+		<property name="automaticTestTable" value="${jdbc.default.automaticTestTable}" />
+	</bean>
+
+
+	<bean id="masterDataSource" parent="parentDataSource">
+		<property name="driverClass" value="${jdbc.master.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.master.url}" />
+		<property name="user" value="${jdbc.master.username}" />
+		<property name="password" value="${jdbc.master.password}" />
+	</bean>
+
+	<bean id="slaveDataSource" parent="parentDataSource">
+		<property name="driverClass" value="${jdbc.slave.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.slave.url}" />
+		<property name="user" value="${jdbc.slave.username}" />
+		<property name="password" value="${jdbc.slave.password}" />
+	</bean>
+
+	<bean id="dataSource" class="com.mvc.framework.dao.DynamicDataSource">
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry key="slave" value-ref="slaveDataSource" />
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="masterDataSource" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="namingStrategy">
+			<bean class="org.hibernate.cfg.ImprovedNamingStrategy" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl}</prop>
+				<prop key="show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
+				<prop key="hibernate.cache.use_query_cache">false</prop>
+				<prop key="org.hibernate.envers.audit_table_suffix">
+					_Audit
+				</prop>
+				<prop key="org.hibernate.envers.audit_table_prefix">
+					log_
+				</prop>
+				<prop key="org.hibernate.envers.revision_field_key">
+					rev
+				</prop>
+				<prop key="org.hibernate.envers.revision_type_field_key">
+					revtype
+				</prop>
+				<prop key="org.hibernate.envers.revision_on_collection_change">
+					true
+				</prop>
+				<prop key="org.hibernate.envers.do_not_audit_optimistic_locking_field">
+					true
+				</prop>
+				<prop key="org.hibernate.envers.store_data_at_delete">
+					true
+				</prop>
+				<prop key="org.hibernate.envers.default_schema"></prop>
+				<prop key="org.hibernate.envers.default_catalog"></prop>
+			</props>
+		</property>
+		<property name="packagesToScan" value="com.**.model" />
+
+	</bean>
+
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation" value="classpath:ibatis/sqlMapConfig.xml" />
+	</bean>
+
+	<bean id="baseIbatisDao" class="com.mvc.framework.dao.BaseIbatisDao">
+		<property name="dataSource" ref="dataSource" />
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+
+</beans>
